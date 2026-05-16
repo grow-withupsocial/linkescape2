@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Escape in-app browser restrictions. Free universal link converter.">
+    <title>LinkEscape - Escape In-App Browser Restrictions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --primary: #FF6B35;
+            --secondary: #004E89;
+            --accent: #1AC8ED;
+            --dark: #0a0a0a;
+            --darker: #050505;
+            --surface: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --success: #4ade80;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 50%, #0f0f0f 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(26, 200, 237, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 30px 100px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 3.5em;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .hero-title-highlight {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3em;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(90deg, var(--primary), #ff8a50);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            box-shadow: 0 10px 40px rgba(255, 107, 53, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(255, 107, 53, 0.4);
+        }
+
+        .converter-section {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 30px;
+        }
+
+        .section-title {
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 50px;
+            color: var(--text-primary);
+        }
+
+        .converter-card {
+            background: rgba(26, 26, 26, 0.8);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: 15px;
+            padding: 50px 40px;
+            backdrop-filter: blur(20px);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .converter-card:hover {
+            border-color: rgba(255, 107, 53, 0.6);
+            box-shadow: 0 20px 60px rgba(255, 107, 53, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h1 {
+                font-size: 2.2em;
+            }
+            
+            .nav-links {
+                gap: 15px;
+                font-size: 0.85em;
+            }
+
+            .converter-card {
+                padding: 30px 20px;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.2);
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 14px 28px;
+            background: linear-gradient(90deg, var(--primary), #ff8a50);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 14px 28px;
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .output-section {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 2px solid rgba(255, 107, 53, 0.2);
+            display: none;
+        }
+
+        .output-section.active {
+            display: block;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .output-title {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .output-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(26, 200, 237, 0.5);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            word-break: break-all;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.85em;
+            color: var(--accent);
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .output-text {
+            flex: 1;
+            padding-right: 80px;
+        }
+
+        .copy-button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 8px 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.75em;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .copy-button:hover {
+            background: #ff8a50;
+        }
+
+        .copy-button.copied {
+            background: var(--success);
+        }
+
+        .features-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 30px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 30px;
+            background: rgba(26, 26, 26, 0.6);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(26, 26, 26, 0.9);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .feature-text {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+
+        .how-works {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 30px;
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .step {
+            position: relative;
+            padding: 30px;
+            background: rgba(255, 107, 53, 0.05);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), #ff8a50);
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .step-title {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .step-text {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        footer {
+            padding: 40px 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            color: var(--text-secondary);
+            margin-top: 60px;
+        }
+
+        .success-message {
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .error-message {
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            grid-column: 1 / -1;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: normal;
+            text-transform: none;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        .info-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(26, 200, 237, 0.1);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        .info-box strong {
+            color: var(--accent);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- HEADER -->
+        <header>
+            <nav>
+                <div class="logo">🔗 LinkEscape</div>
+                <ul class="nav-links">
+                    <li><a onclick="document.getElementById('converter').scrollIntoView()">Converter</a></li>
+                    <li><a onclick="document.getElementById('features').scrollIntoView()">Features</a></li>
+                    <li><a onclick="document.getElementById('how').scrollIntoView()">How It Works</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <h1>Escape In-App <span class="hero-title-highlight">Browser Restrictions</span></h1>
+            <p class="hero-subtitle">Convert any URL to open in your default browser instead of being trapped in in-app browsers</p>
+            <button class="cta-button" onclick="document.getElementById('converter').scrollIntoView()">Get Started Free</button>
+        </section>
+
+        <!-- CONVERTER SECTION -->
+        <section class="converter-section" id="converter">
+            <h2 class="section-title">Universal Link Converter</h2>
+            
+            <div class="converter-card">
+                <div id="successMessage" class="success-message">✓ Link converted successfully!</div>
+                <div id="errorMessage" class="error-message"></div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="originalUrl">Original URL</label>
+                        <input type="url" id="originalUrl" placeholder="https://example.com/page">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform">Detection Method</label>
+                        <select id="platform">
+                            <option value="auto">Auto-Detect Device</option>
+                            <option value="ios">Force iOS Open</option>
+                            <option value="android">Force Android Open</option>
+                            <option value="windows">Force Windows/Desktop</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customName">Custom Link Name (Optional)</label>
+                        <input type="text" id="customName" placeholder="My Awesome Link">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="redirectType">Redirect Method</label>
+                        <select id="redirectType">
+                            <option value="direct">Direct Open</option>
+                            <option value="delay">Delayed Open (1.5s)</option>
+                            <option value="popup">Pop-up Style</option>
+                        </select>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="trackingEnabled">
+                        <label for="trackingEnabled">Enable Click Analytics (Anonymous)</label>
+                    </div>
+                </div>
+
+                <div class="button-container">
+                    <button type="button" class="btn-primary" onclick="convertUrl()">Convert URL</button>
+                    <button type="button" class="btn-secondary" onclick="resetForm()">Clear</button>
+                </div>
+
+                <!-- OUTPUT -->
+                <div class="output-section" id="outputSection">
+                    <div class="output-title">Your Escape Link</div>
+                    <div class="output-box">
+                        <span class="output-text" id="outputText">Your converted URL will appear here</span>
+                        <button type="button" class="copy-button" onclick="copyToClipboard()">Copy</button>
+                    </div>
+
+                    <div class="output-title" style="margin-top: 30px;">How to Use</div>
+                    <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                        Share this link anywhere. When someone clicks it:
+                    </p>
+                    <ul style="color: var(--text-secondary); margin-left: 20px; margin-bottom: 20px;">
+                        <li>✓ It detects if they're in an in-app browser</li>
+                        <li>✓ Shows them a button to open in their default browser</li>
+                        <li>✓ Works on WhatsApp, Instagram, Facebook, TikTok & more</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <strong>💡 Pro Tip:</strong> Use the delayed open method for better UX - it gives users a moment to see the redirect page.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURES SECTION -->
+        <section class="features-section" id="features">
+            <h2 class="section-title">Why Use LinkEscape?</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-title">Instant Conversion</div>
+                    <div class="feature-text">Convert any URL in seconds. No sign-up required, completely free.</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <div class="feature-title">Universal Compatibility</div>
+                    <div class="feature-text">Works across all platforms: iOS, Android, Windows, and web browsers.</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Anonymous Analytics</div>
+                    <div class="feature-text">Optional click tracking without storing personal data or requiring registration.</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <div class="feature-title">Privacy First</div>
+                    <div class="feature-text">No ads, no tracking cookies, no data selling. Your links, your control.</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <div class="feature-title">Smart Detection</div>
+                    <div class="feature-text">Automatically detects in-app browsers and redirects intelligently.</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <div class="feature-title">Lightning Fast</div>
+                    <div class="feature-text">Minimal redirect overhead. Your users get to the content instantly.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HOW IT WORKS -->
+        <section class="how-works" id="how">
+            <h2 class="section-title">How It Works</h2>
+            
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Paste Your URL</div>
+                    <div class="step-text">Enter any URL you want to share. No restrictions on what links you can convert.</div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Choose Your Method</div>
+                    <div class="step-text">Select how the link should behave - auto-detect, or force a specific platform.</div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Get Your Escape Link</div>
+                    <div class="step-text">Copy the generated link and share it anywhere. Works instantly, everywhere.</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 50px; padding: 30px; background: rgba(255, 107, 53, 0.05); border: 1px solid rgba(255, 107, 53, 0.2); border-radius: 12px;">
+                <h3 style="color: var(--primary); margin-bottom: 15px;">What Are In-App Browsers?</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 10px;">
+                    Apps like WhatsApp, Instagram, Facebook, Telegram, and TikTok have built-in browsers that open links instead of sending them to your default browser. These in-app browsers:
+                </p>
+                <ul style="color: var(--text-secondary); margin-left: 20px;">
+                    <li>• Can't access your password managers</li>
+                    <li>• Have limited functionality</li>
+                    <li>• Slow down your browsing</li>
+                    <li>• Track your activity extensively</li>
+                </ul>
+                <p style="color: var(--text-secondary); margin-top: 15px;">
+                    LinkEscape solves this by showing users a page with a button to open in their default browser.
+                </p>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            <p>&copy; 2024 LinkEscape. Made with ❤️ to escape in-app browser restrictions.</p>
+            <p style="margin-top: 10px; font-size: 0.85em;">100% Free • No Sign-Up • Privacy Focused</p>
+        </footer>
+    </div>
+
+    <script>
+        function convertUrl() {
+            const originalUrl = document.getElementById('originalUrl').value.trim();
+            const customName = document.getElementById('customName').value.trim();
+            const platform = document.getElementById('platform').value;
+            const redirectType = document.getElementById('redirectType').value;
+            const trackingEnabled = document.getElementById('trackingEnabled').checked;
+
+            const errorMsg = document.getElementById('errorMessage');
+            const successMsg = document.getElementById('successMessage');
+
+            errorMsg.classList.remove('show');
+            successMsg.classList.remove('show');
+
+            if (!originalUrl) {
+                showError('Please enter a valid URL');
+                return;
+            }
+
+            try {
+                new URL(originalUrl);
+            } catch (e) {
+                showError('Please enter a valid URL (e.g., https://example.com)');
+                return;
+            }
+
+            // Generate escape link
+            const currentDomain = window.location.origin;
+            const escapeLink = `${currentDomain}/redirect?url=${encodeURIComponent(originalUrl)}&platform=${platform}&redirect=${redirectType}${trackingEnabled ? '&tracking=1' : ''}`;
+
+            document.getElementById('outputText').textContent = escapeLink;
+            document.getElementById('outputSection').classList.add('active');
+
+            successMsg.classList.add('show');
+            setTimeout(() => successMsg.classList.remove('show'), 5000);
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById('outputText').textContent;
+            
+            if (text === 'Your converted URL will appear here') {
+                showError('Please generate a link first');
+                return;
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                btn.classList.add('copied');
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(() => {
+                showError('Failed to copy to clipboard');
+            });
+        }
+
+        function resetForm() {
+            document.getElementById('originalUrl').value = '';
+            document.getElementById('customName').value = '';
+            document.getElementById('platform').value = 'auto';
+            document.getElementById('redirectType').value = 'direct';
+            document.getElementById('trackingEnabled').checked = false;
+            document.getElementById('outputSection').classList.remove('active');
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('successMessage').classList.remove('show');
+        }
+
+        function showError(message) {
+            const errorMsg = document.getElementById('errorMessage');
+            errorMsg.textContent = message;
+            errorMsg.classList.add('show');
+            setTimeout(() => errorMsg.classList.remove('show'), 5000);
+        }
+
+        document.getElementById('originalUrl').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                convertUrl();
+            }
+        });
+    </script>
+</body>
+</html>
